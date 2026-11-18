@@ -1,0 +1,5 @@
+<?php require_once __DIR__.'/../config/config.php'; require_once __DIR__.'/../includes/functions.php'; require_login(); if(isset($_GET['read'])){$pdo->prepare("UPDATE messages SET is_read=1 WHERE id=?")->execute([(int)$_GET['read']]);header('Location: messages.php');exit;} $items=$pdo->query("SELECT * FROM messages ORDER BY created_at DESC")->fetchAll();$pageTitle='Messages';include __DIR__.'/../includes/admin_header.php'; ?>
+<div class="page-title"><h1>Messages reçus</h1><p>Demandes envoyées via le formulaire de contact.</p></div>
+<?php foreach($items as $m): ?><article class="msg<?= $m['is_read']?'':' unread' ?>"><strong><?=e($m['subject'])?></strong><p><?=nl2br(e($m['message']))?></p><small><?=e($m['name'])?> · <?=e($m['email'])?> · <?=e($m['created_at'])?></small> <?php if(!$m['is_read']): ?><a class="btn-o" style="margin-left:10px;padding:4px 12px" href="?read=<?=(int)$m['id']?>"><?=ai('check')?>Marquer comme lu</a><?php else: ?><span class="tag ok">Lu</span><?php endif; ?></article><?php endforeach; ?>
+<?php if(!$items): ?><p class="muted">Aucun message.</p><?php endif; ?>
+<?php include __DIR__.'/../includes/admin_footer.php'; ?>
